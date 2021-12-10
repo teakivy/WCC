@@ -1,0 +1,8 @@
+name: WumboClipChampionships
+version: '${project.version}'
+main: me.teakivy.wcc.Main
+api-version: 1.18
+prefix: WCC
+authors: [ TeakIvy ]
+description: WumboClip Championships
+website: https://twitter.com/TeakIvyYT
