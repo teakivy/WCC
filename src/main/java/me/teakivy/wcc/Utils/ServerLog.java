@@ -7,12 +7,14 @@ import java.util.logging.Logger;
 
 public class ServerLog {
 
+    private static final Logger logger = Bukkit.getServer().getLogger();
+
     /**
      * Logs a message to the console.
      * @param message The message to log.
      */
     public static void log(String message) {
-        Bukkit.getServer().getLogger().log(Level.INFO, message);
+        logger.log(Level.INFO, message);
     }
 
     /**
@@ -20,7 +22,7 @@ public class ServerLog {
      * @param message The message to log.
      */
     public static void info(String message) {
-        Bukkit.getServer().getLogger().log(Level.INFO, message);
+        logger.log(Level.INFO, message);
     }
 
     /**
@@ -28,7 +30,7 @@ public class ServerLog {
      * @param message The message to log.
      */
     public static void warning(String message) {
-        Bukkit.getServer().getLogger().log(Level.WARNING, message);
+        logger.log(Level.WARNING, message);
     }
 
     /**
@@ -36,7 +38,7 @@ public class ServerLog {
      * @param message The message to log.
      */
     public static void error(String message) {
-        Bukkit.getServer().getLogger().log(Level.SEVERE, message);
+        logger.log(Level.SEVERE, message);
     }
 
     /**
@@ -44,7 +46,7 @@ public class ServerLog {
      * @param message The message to log.
      */
     public static void severe(String message) {
-        Bukkit.getServer().getLogger().log(Level.SEVERE, message);
+        logger.log(Level.SEVERE, message);
     }
 
     /**
@@ -52,7 +54,7 @@ public class ServerLog {
      * @param message The message to log.
      */
     public static void debug(String message) {
-        Bukkit.getServer().getLogger().log(Level.FINE, message);
+        logger.log(Level.FINE, message);
     }
 
     /**
@@ -60,6 +62,6 @@ public class ServerLog {
      * @return The server's Logger.
      */
     public static Logger getLogger() {
-        return Bukkit.getServer().getLogger();
+        return logger;
     }
 }
