@@ -10,6 +10,7 @@ public class Player {
     private final UUID uuid;
     private int lives;
     private int timeRemaining;
+    private final org.bukkit.entity.Player player;
 
     private PlayerRole role = PlayerRole.PLAYER;
 
@@ -20,7 +21,8 @@ public class Player {
      * @param lives Lives
      * @param timeRemaining Time remaining
      */
-    public Player(String username, UUID uuid, int lives, int timeRemaining) {
+    public Player(org.bukkit.entity.Player player, String username, UUID uuid, int lives, int timeRemaining) {
+        this.player = player;
         this.username = username;
         this.uuid = uuid;
         this.lives = lives;
@@ -28,10 +30,26 @@ public class Player {
     }
 
     /**
+     * Get player
+     * @return Player
+     */
+    public org.bukkit.entity.Player getPlayer() {
+        return player;
+    }
+
+    /**
      * Get the username
      * @return Username
      */
     public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Get the username
+     * @return Username
+     */
+    public String getName() {
         return username;
     }
 
