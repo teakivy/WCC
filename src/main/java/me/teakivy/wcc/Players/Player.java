@@ -11,6 +11,7 @@ public class Player {
     private int lives;
     private int timeRemaining;
     private final org.bukkit.entity.Player player;
+    private boolean canBeDamagedByPlayers;
 
     private PlayerRole role = PlayerRole.PLAYER;
 
@@ -27,6 +28,7 @@ public class Player {
         this.uuid = uuid;
         this.lives = lives;
         this.timeRemaining = timeRemaining;
+        this.canBeDamagedByPlayers = true;
     }
 
     /**
@@ -70,6 +72,14 @@ public class Player {
     }
 
     /**
+     * Check if the player can be damaged by players
+     * @return True if the player can be damaged by players
+     */
+    public boolean canBeDamagedByPlayers() {
+        return canBeDamagedByPlayers;
+    }
+
+    /**
      * Get the time remaining
      * @return Time remaining
      */
@@ -99,6 +109,14 @@ public class Player {
      */
     public void setLives(int lives) {
         this.lives = lives;
+    }
+
+    /**
+     * Set the player's canBeDamagedByPlayers
+     * @param canBeDamagedByPlayers True if the player can be damaged by players
+     */
+    public void setCanBeDamagedByPlayers(boolean canBeDamagedByPlayers) {
+        this.canBeDamagedByPlayers = canBeDamagedByPlayers;
     }
 
     /**
