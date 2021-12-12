@@ -29,6 +29,7 @@ public class WorldBorderManager {
         this.world = world;
 
         world.getWorldBorder().setSize(width);
+        world.getWorldBorder().setCenter(center);
     }
 
     /**
@@ -69,6 +70,7 @@ public class WorldBorderManager {
      */
     public void setCenter(Location center) {
         this.center = center;
+        world.getWorldBorder().setCenter(center);
     }
 
     /**
@@ -79,8 +81,8 @@ public class WorldBorderManager {
      */
     public void set(int size, int time, TimeUnit unit) {
         time = (int) unit.toSeconds(time);
-
         world.getWorldBorder().setSize(size, time);
+        world.getWorldBorder().setDamageBuffer(0);
     }
 
     /**
@@ -90,6 +92,7 @@ public class WorldBorderManager {
      */
     public void set(int size, int seconds) {
         world.getWorldBorder().setSize(size, seconds);
+        world.getWorldBorder().setDamageBuffer(0);
     }
 
     /**
@@ -97,7 +100,8 @@ public class WorldBorderManager {
      * @param size the size to set
      */
     public void set(int size) {
-        world.getWorldBorder().setSize(size);
+        world.getWorldBorder().setSize(size, 0);
+        world.getWorldBorder().setDamageBuffer(0);
     }
 
     /**
@@ -105,6 +109,7 @@ public class WorldBorderManager {
      */
     public void reset() {
         world.getWorldBorder().setSize(width);
+        world.getWorldBorder().setDamageBuffer(0);
     }
 
 }
