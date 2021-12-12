@@ -2,15 +2,17 @@ package me.teakivy.wcc.Events;
 
 import me.teakivy.wcc.Main;
 import me.teakivy.wcc.Managers.PlayerManager;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
+import me.teakivy.wcc.Managers.StageManager;
+import me.teakivy.wcc.Utils.ServerLog;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -53,12 +55,44 @@ public class PlayerEvents implements Listener {
             player.getLocation().getWorld().spawnParticle(Particle.FLAME, player.getLocation(), 100, 0, 0, 0, .5);
 
         }, 5L);
-
-
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         playerManager.removePlayer(playerManager.getPlayer(event.getPlayer().getUniqueId()));
+    }
+
+    @EventHandler
+    public void onRespawn(PlayerRespawnEvent event) {
+        playerManager.getPlayer(event.getPlayer().getUniqueId()).setCanBeDamagedByPlayers(false);
+        Bukkit.getScheduler().runTaskLater(main, () -> {
+            playerManager.getPlayer(event.getPlayer().getUniqueId()).setCanBeDamagedByPlayers(true);
+        }, 20 * 60);
+    }
+
+    @EventHandler
+    public void onDamage(EntityDamageByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player)) return;
+        if (!(event.getDamager() instanceof Player)) return;
+        if (!playerManager.getPlayer(((Player) event.getDamager()).getUniqueId()).canBeDamagedByPlayers()) {
+            playerManager.getPlayer(((Player) event.getDamager()).getUniqueId()).setCanBeDamagedByPlayers(true);
+        }
+        if (!playerManager.getPlayer(((Player) event.getEntity()).getUniqueId()).canBeDamagedByPlayers()) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+
+        ServerLog.log(playerManager.getPlayer(player.getUniqueId()).getLives() + "");
+        if (StageManager.getStageType() == StageManager.StageType.GRACE_PERIOD || StageManager.getStageType() == StageManager.StageType.NONE) return;
+
+        playerManager.getPlayer(player.getUniqueId()).setLives(playerManager.getPlayer(player.getUniqueId()).getLives() - 1);
+
+        if (playerManager.getPlayer(player.getUniqueId()).getLives() <= 0) {
+            player.setGameMode(GameMode.SPECTATOR);
+        }
     }
 }
