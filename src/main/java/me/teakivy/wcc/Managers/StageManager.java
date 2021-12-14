@@ -1,12 +1,14 @@
 package me.teakivy.wcc.Managers;
 
 import me.teakivy.wcc.Main;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import net.coreprotect.CoreProtect;
+import org.bukkit.*;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Manages the stage of the game.
@@ -196,6 +198,12 @@ public class StageManager {
     private static void startStageFour() {
         overworldBorderManager.set(850);
         overworldBorderManager.set(600, 1, TimeUnit.HOURS);
+
+        for (me.teakivy.wcc.Players.Player player : PlayerManager.getOnlinePlayers()) {
+            if (player.getLives() > 1) {
+                player.setLives(1);
+            }
+        }
     }
 
     private static void startStageFive() {
@@ -217,6 +225,12 @@ public class StageManager {
                 if (StageManager.getStage() != Stage.FIVE) this.cancel();
             }
         }.runTaskTimerAsynchronously(main, 20, 20);
+
+        for (me.teakivy.wcc.Players.Player player : PlayerManager.getOnlinePlayers()) {
+            if (player.getLives() > 1) {
+                player.setLives(1);
+            }
+        }
     }
 
     private static void startStageSix() {
@@ -238,6 +252,12 @@ public class StageManager {
                 if (StageManager.getStage() != Stage.SIX) this.cancel();
             }
         }.runTaskTimerAsynchronously(main, 20, 20);
+
+        for (me.teakivy.wcc.Players.Player player : PlayerManager.getOnlinePlayers()) {
+            if (player.getLives() > 1) {
+                player.setLives(1);
+            }
+        }
     }
 
     private static void startStageSeven() {
@@ -249,15 +269,68 @@ public class StageManager {
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     if (player.getWorld().getName().equalsIgnoreCase("world_nether")) {
                         if (player.getHealth() - 15 >= 0) {
+                            if (player.getGameMode() != GameMode.SURVIVAL) continue;
                             player.setHealth(player.getHealth() - 15);
                         } else {
+                            if (player.getGameMode() != GameMode.SURVIVAL) continue;
+                            player.setHealth(0);
+                        }
+                    }
+                    if (player.getWorld().getName().equalsIgnoreCase("world")) {
+                        if (player.getHealth() - 1 >= 0) {
+                            if (player.getGameMode() != GameMode.SURVIVAL) continue;
+                            player.setHealth(player.getHealth() - 1);
+                        } else {
+                            if (player.getGameMode() != GameMode.SURVIVAL) continue;
                             player.setHealth(0);
                         }
                     }
                 }
-
                 if (StageManager.getStage() != Stage.SEVEN) this.cancel();
             }
         }.runTaskTimerAsynchronously(main, 20, 20);
+
+        for (me.teakivy.wcc.Players.Player player : PlayerManager.getOnlinePlayers()) {
+            if (player.getLives() > 1) {
+                player.setLives(1);
+            }
+        }
+
+        AtomicInteger layer = new AtomicInteger();
+        layer.set(Bukkit.getWorld("world").getMinHeight());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                World world = Bukkit.getWorld("world");
+                for (Chunk chunk : world.getLoadedChunks()) {
+                    for (Entity entity : chunk.getEntities()) {
+                        if (entity instanceof Player) {
+                            Player player = (Player) entity;
+                            if (!player.getScoreboardTags().contains("spectator")) {
+                                for (int i = 0; i < 16; i++) {
+                                    for (int i1 = 0; i1 < 16; i1++) {
+                                        for (int i2 = Bukkit.getWorld("world").getMinHeight(); i2 < layer.get(); i2++) {
+                                            if (i2 > 320) continue;
+                                            if (chunk.getBlock(i, i2, i1).getType() != Material.AIR) {
+                                                CoreProtect.getInstance().getAPI().logRemoval("wumboclip",
+                                                        new Location(world, (chunk.getX() * 16) + i, i2, (chunk.getZ() * 16) + i1),
+                                                        chunk.getBlock(i, i2, i1).getType(),
+                                                        chunk.getBlock(i, i2, i1).getBlockData());
+                                                chunk.getBlock(i, i2, i1).setType(Material.AIR);
+                                            }
+                                        }
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+                if (stage != Stage.SEVEN) this.cancel();
+                layer.getAndIncrement();
+            }
+        }.runTaskTimer(main, 5 * 20 * 60, 2 * 20);
+
     }
+
 }
