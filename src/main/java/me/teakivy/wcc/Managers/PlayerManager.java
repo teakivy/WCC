@@ -2,6 +2,7 @@ package me.teakivy.wcc.Managers;
 
 import me.teakivy.wcc.Main;
 import me.teakivy.wcc.Players.Player;
+import me.teakivy.wcc.Utils.Console;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,28 +18,51 @@ import java.util.UUID;
  * Manages the players of the game.
  */
 public class PlayerManager implements Listener {
-    private final ArrayList<Player> onlinePlayers = new ArrayList<>();
+    private static final ArrayList<Player> onlinePlayers = new ArrayList<>();
 
     /**
      * Adds a player to the online players list.
      * @param player The player to add.
      */
-    public void addPlayer(Player player) {
+    public static void addPlayer(Player player) {
         onlinePlayers.add(player);
+    }
+
+    /**
+     * Creates & adds a player to the online players list.
+     * @param player The player to add.
+     */
+    public static void addPlayer(org.bukkit.entity.Player player) {
+        PersistentDataContainer container = player.getPersistentDataContainer();
+        Main main = Main.getPlugin(Main.class);
+        int lives = 5;
+        int time = 8 * 60 * 60 * 1000;
+
+        if (container.has(new NamespacedKey(main, "lives"), PersistentDataType.INTEGER)) {
+            lives = container.get(new NamespacedKey(main, "lives"), PersistentDataType.INTEGER);
+        }
+        if (container.has(new NamespacedKey(main, "time"), PersistentDataType.INTEGER)) {
+            time = container.get(new NamespacedKey(main, "time"), PersistentDataType.INTEGER);
+        }
+
+        Player newPlayer = new Player(player, player.getName(), player.getUniqueId(), lives, time);
+
+        onlinePlayers.add(newPlayer);
+        Console.log(onlinePlayers.toString());
     }
 
     /**
      * Removes a player from the online players list.
      * @param player The player to remove.
      */
-    public void removePlayer(Player player) {
+    public static void removePlayer(Player player) {
         onlinePlayers.remove(player);
     }
 
     /**
      * Gets the online players list.
      */
-    public ArrayList<Player> getOnlinePlayers() {
+    public static ArrayList<Player> getOnlinePlayers() {
         return onlinePlayers;
     }
 
@@ -47,7 +71,7 @@ public class PlayerManager implements Listener {
      * @param name The name of the player.
      * @return If the player is online.
      */
-    public boolean isPlayerOnline(String name) {
+    public static boolean isPlayerOnline(String name) {
         for (Player player : onlinePlayers) {
             if (player.getName().equals(name)) {
                 return true;
@@ -61,7 +85,7 @@ public class PlayerManager implements Listener {
      * @param uuid The UUID of the player.
      * @return If the player is online.
      */
-    public boolean isPlayerOnline(UUID uuid) {
+    public static boolean isPlayerOnline(UUID uuid) {
         for (Player player : onlinePlayers) {
             if (player.getUUID() == uuid) {
                 return true;
@@ -75,7 +99,7 @@ public class PlayerManager implements Listener {
      * @param name The name of the player.
      * @return The player.
      */
-    public Player getPlayer(String name) {
+    public static Player getPlayer(String name) {
         for (Player player : onlinePlayers) {
             if (player.getName().equals(name)) {
                 return player;
@@ -89,7 +113,7 @@ public class PlayerManager implements Listener {
      * @param uuid The UUID of the player.
      * @return The player.
      */
-    public Player getPlayer(UUID uuid) {
+    public static Player getPlayer(UUID uuid) {
         for (Player player : onlinePlayers) {
             if (player.getUUID() == uuid) {
                 return player;
@@ -103,7 +127,7 @@ public class PlayerManager implements Listener {
      * @param player The Player Object of the player.
      * @return The player.
      */
-    public Player getPlayer(org.bukkit.entity.Player player) {
+    public static Player getPlayer(org.bukkit.entity.Player player) {
         for (Player player1 : onlinePlayers) {
             if (player1.getPlayer() == player) {
                 return player1;
@@ -117,7 +141,7 @@ public class PlayerManager implements Listener {
      * @param player The player.
      * @return Whether the player has joined the server before.
      */
-    public boolean hasJoined(org.bukkit.entity.Player player) {
+    public static boolean hasJoined(org.bukkit.entity.Player player) {
         PersistentDataContainer container = player.getPersistentDataContainer();
         return container.has(new NamespacedKey(Main.getPlugin(Main.class), "hasJoined"), PersistentDataType.STRING);
     }
