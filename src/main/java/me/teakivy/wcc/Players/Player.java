@@ -1,5 +1,9 @@
 package me.teakivy.wcc.Players;
 
+import me.teakivy.wcc.Main;
+import org.bukkit.NamespacedKey;
+import org.bukkit.persistence.PersistentDataContainer;
+
 import java.util.UUID;
 
 /**
@@ -109,6 +113,8 @@ public class Player {
      */
     public void setLives(int lives) {
         this.lives = lives;
+        PersistentDataContainer container = player.getPersistentDataContainer();
+        container.set(new NamespacedKey(Main.getPlugin(Main.class), "lives"), org.bukkit.persistence.PersistentDataType.INTEGER, lives);
     }
 
     /**
