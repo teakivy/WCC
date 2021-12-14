@@ -5,7 +5,7 @@ import org.bukkit.Bukkit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class ServerLog {
+public class Console {
 
     private static final Logger logger = Bukkit.getServer().getLogger();
 
